@@ -1,0 +1,49 @@
+{
+  "name": "@qonico/cosmos-client",
+  "version": "0.1.0",
+  "description": "Cosmos and other cosmos based blockchains js client",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "mocha --reporter spec -r ts-node/register **/*.test.ts",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qonico/cosmos-client.git"
+  },
+  "keywords": [
+    "cosmos",
+    "qonico",
+    "cosmos-sdk",
+    "blockchain"
+  ],
+  "author": "Fernando Caamaño <fcaamano@qonico.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/qonico/cosmos-client/issues"
+  },
+  "homepage": "https://github.com/qonico/cosmos-client#readme",
+  "devDependencies": {
+    "@types/bech32": "^1.1.2",
+    "@types/bip32": "^2.0.0",
+    "@types/bip39": "^3.0.0",
+    "@types/crypto-js": "^3.1.45",
+    "@types/elliptic": "^6.4.12",
+    "@types/node": "^13.13.5",
+    "@types/secp256k1": "^4.0.1",
+    "mocha": "^7.1.2",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "bech32": "^1.1.4",
+    "bip32": "^2.0.5",
+    "bip39": "^3.0.2",
+    "crypto": "^1.0.1",
+    "crypto-js": "^4.0.0",
+    "elliptic": "^6.5.2",
+    "secp256k1": "^4.0.1"
+  }
+}
