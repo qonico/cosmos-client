@@ -37,7 +37,7 @@ export type AccountDetails = {
 export const successResponse = (result: any) => result.data;
 export const errorResponse = (result: any) => result;
 
-export const getAccountDetails = async (address: string, restServer: string): Promise<AccountDetails> => {
+export const getAccountDetails = async (restServer: string, address: string): Promise<AccountDetails> => {
   return axios.get(`${restServer}/auth/accounts/${address}`)
   .then(successResponse)
   .catch(errorResponse);
