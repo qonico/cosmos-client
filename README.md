@@ -7,7 +7,7 @@ npm i @qonico/cosmos-client
 ```
 
 ## Usage
-```
+```javascript
 import axios from 'axios';
 import { StdTx, Wallet, UnsignedStdTx } from '@qonico/cosmos-client';
 
