@@ -1,61 +1,9 @@
 import axios from 'axios';
 
+import { successResponse, errorResponse, IMsg, IFee } from './util';
 import { Wallet, Signature } from './wallet';
 
 const LocalRestServer = 'http://localhost:1317';
-
-export type AccountDetails = {
-  height: string,
-  result: {
-    type: string,
-    value: {
-      address: string,
-      coins: ICoin[],
-      public_key: string,
-      account_number: number,
-      sequence: number,
-    },
-  },
-};
-
-export type IMsg = {
-  type: string,
-  value: any,
-}
-
-export type ICoin = {
-  denom: string,
-  amount: string,
-}
-
-export type IDecCoin = {
-  denom: string
-  amount: number | string,
-}
-
-export type IFee = {
-  amount: ICoin[],
-  gas: number | string,
-}
-
-export type UnsignedStdTx = {
-  type: string,
-  value: {
-    msg: IMsg[],
-    fee: { amount: any[], gas: string },
-    signatures: any[],
-    memo: string,
-  },
-};
-
-export type IStdTx = {
-  msgs?: IMsg[],
-  fee: IFee,
-  chain_id: string,
-  account_number: number | string,
-  sequence: number | string,
-  memo?: string,
-}
 
 export type ITx = {
   msg: IMsg[],
@@ -64,7 +12,7 @@ export type ITx = {
   memo: string,
 }
 
-abstract class Transaction {
+export abstract class Transaction {
   protected promiseChain: (() => Promise<void>)[] = [];
   protected _tx?: ITx;
 
@@ -109,8 +57,8 @@ abstract class Transaction {
       tx: this._tx,
       mode,
     }))
-    .then(this.successResponse)
-    .catch(this.errorResponse);
+    .then(successResponse)
+    .catch(errorResponse);
   }
 
   protected sortObject(obj: any): any {
@@ -124,71 +72,6 @@ abstract class Transaction {
     })
     return result
   }
-
-  async getAccountDetails(address: string): Promise<AccountDetails> {
-    return axios.get(`${this._restServer}/auth/accounts/${address}`)
-    .then(this.successResponse)
-    .catch(this.errorResponse);
-  }
-
-  // TODO: Apply correst type
-  successResponse(result: any) {
-    return result.data;
-  }
-  errorResponse(result: any) {
-    return result;
-  }
-}
-
-export class StdTx extends Transaction {
-  private _uStdTx: UnsignedStdTx;
-  
-  constructor(
-    uStdTx: UnsignedStdTx,
-    chainId: string,
-    restServer?: string,
-  ) {
-    if (!uStdTx.value.msg.length) throw new Error('you need at least one msg in your transaction')
-    
-    super(chainId, restServer);
-    this._uStdTx = uStdTx;
-  }
-
-  protected async addSignature(wallet: Wallet) {
-    const account = await this.getAccountDetails(wallet.address);
-
-    const iStdTx: IStdTx = this.sortObject({
-      msgs: this._uStdTx.value.msg,
-      fee: this._uStdTx.value.fee,
-      chain_id: this._chainId,
-      account_number: account.result.value.account_number.toString(),
-      sequence: account.result.value.sequence.toString(),
-      memo: this._uStdTx.value.memo,
-    });
-
-    this._tx = {
-      msg: this._uStdTx.value.msg,
-      fee: this._uStdTx.value.fee,
-      memo: this._uStdTx.value.memo,
-      signatures: []
-    }
-
-    this._tx.signatures.push(wallet.signStdTx(JSON.stringify(iStdTx)));
-  }
 }
 
 
-
-
-export const buyName = async (restServer: string, token: string, address: string, name: string, amount: number, chainId: string): Promise<UnsignedStdTx> =>
-  axios.post(`${restServer}/nameservice/names`, JSON.stringify({
-    base_req: {
-      chain_id: chainId,
-      from: address,
-    },
-    name,
-    amount: `${amount}${token}`,
-    buyer: address,
-  }))
-    .then(result => result.data)
-    .catch(result => result);
